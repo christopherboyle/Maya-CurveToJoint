@@ -24,13 +24,15 @@ class CurveToJointUI(QtWidgets.QDialog):
         layout.addWidget(createJointsBtn)
 
     def createJoints(self):
-        NUM_OF_SPANS = cmds.getAttr('curveShape1.spans')
+        selection = cmds.ls(selection = True, long = True)
+        if (len(selection) == 0):
+            print('error - please select a curve!')
+            return
+        else:
+            NUM_OF_SPANS = cmds.getAttr(selection[0] + '.spans')
+            NUM_OF_JOINTS = float(self.jointAmountSB.value())
+            POS_DIFF = float(NUM_OF_SPANS) / (NUM_OF_JOINTS - 1.0)
 
-        NUM_OF_JOINTS = float(self.jointAmountSB.value())
-        POS_DIFF = float(NUM_OF_SPANS) / (NUM_OF_JOINTS - 1.0)
-
-        for i in range (0, int(NUM_OF_JOINTS)):
-            print((i * POS_DIFF))
-            point = cmds.pointOnCurve( 'curve1', pr = (i * POS_DIFF), p = True )
-            print(point)
-            cmds.joint( p = point )
+            for i in range (0, int(NUM_OF_JOINTS)):
+                point = cmds.pointOnCurve(selection[0], pr = (i * POS_DIFF), p = True)
+                cmds.joint(p = point)
