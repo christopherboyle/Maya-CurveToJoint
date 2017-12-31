@@ -9,16 +9,20 @@ class CurveToJointUI(QtWidgets.QDialog):
         self.buildUI()
 
     def buildUI(self):
+        #
         layout = QtWidgets.QVBoxLayout(self)
 
+        #
         instructionsLbl = QtWidgets.QLabel('Select the chosen curve, set the number of joints and press the button below.')
         layout.addWidget(instructionsLbl)
 
+        #
         self.jointAmountSB = QtWidgets.QSpinBox()
         self.jointAmountSB.setMinimum(2)
         self.jointAmountSB.setMaximum(999)
         layout.addWidget(self.jointAmountSB)
 
+        #
         createJointsBtn = QtWidgets.QPushButton('Create Joints')
         createJointsBtn.clicked.connect(self.createJoints)
         layout.addWidget(createJointsBtn)
@@ -29,10 +33,15 @@ class CurveToJointUI(QtWidgets.QDialog):
             print('error - please select a curve!')
             return
         else:
-            NUM_OF_SPANS = cmds.getAttr(selection[0] + '.spans')
+            try:
+                NUM_OF_CURVE_SPANS = cmds.getAttr(selection[0] + '.spans')
+            except:
+                print("error - please ensure selection is a curve!")
+                return
+
             NUM_OF_JOINTS = float(self.jointAmountSB.value())
-            POS_DIFF = float(NUM_OF_SPANS) / (NUM_OF_JOINTS - 1.0)
+            DIFF_BETWEEN_JOINTS = float(NUM_OF_CURVE_SPANS) / (NUM_OF_JOINTS - 1.0)
 
             for i in range (0, int(NUM_OF_JOINTS)):
-                point = cmds.pointOnCurve(selection[0], pr = (i * POS_DIFF), p = True)
+                point = cmds.pointOnCurve(selection[0], pr = (i * DIFF_BETWEEN_JOINTS), p = True)
                 cmds.joint(p = point)
