@@ -15,9 +15,8 @@ class CurveToJointUI(QtWidgets.QDialog):
         layout.addWidget(instructionsLbl)
 
         self.jointAmountSB = QtWidgets.QSpinBox()
-        self.jointAmountSB.setMinimum(1)
+        self.jointAmountSB.setMinimum(2)
         self.jointAmountSB.setMaximum(999)
-        self.jointAmountSB.editingFinished.connect(self.createJoints)
         layout.addWidget(self.jointAmountSB)
 
         createJointsBtn = QtWidgets.QPushButton('Create Joints')
@@ -25,11 +24,13 @@ class CurveToJointUI(QtWidgets.QDialog):
         layout.addWidget(createJointsBtn)
 
     def createJoints(self):
-        NUM_OF_JOINTS = float(self.jointAmountSB.value())
         NUM_OF_SPANS = cmds.getAttr('curveShape1.spans')
 
-        POS_DIFF = float(NUM_OF_SPANS) / NUM_OF_JOINTS
+        NUM_OF_JOINTS = float(self.jointAmountSB.value())
+        POS_DIFF = float(NUM_OF_SPANS) / (NUM_OF_JOINTS - 1.0)
 
-        for i in range (0, int(NUM_OF_JOINTS) + 1):
+        for i in range (0, int(NUM_OF_JOINTS)):
             print((i * POS_DIFF))
-            print(cmds.pointOnCurve( 'curve1', pr = (i * POS_DIFF), p = True ))
+            point = cmds.pointOnCurve( 'curve1', pr = (i * POS_DIFF), p = True )
+            print(point)
+            cmds.joint( p = point )
