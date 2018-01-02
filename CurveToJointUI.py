@@ -1,10 +1,26 @@
 #
 #   Christopher Boyle (D00198519)
 #
-#   20171231    -
+#   20171231    - First Release of CurveToJointUI
 #
 #   Helpful Notes:
 #
+#   A lot of the logic here was taken from lessons learned in
+#   the "Python for Maya" which I found to be a great material for building
+#   upon the UI lessons in class. As such, I opted to go with using the Qt,
+#   library suggested in the course as I found it better for making more
+#   maintainable UIs.
+#
+#   In terms of the UI and logic provided below, there are some minor issues
+#   but I also feel a lot of that comes down to tool training e.g. the logic
+#   breaks if you supply a low number of joints in comparison to the number of
+#   spans the selected curve has. In furture versions of this tool,
+#   this could be corrected by provided a more dynamic selection but I choose
+#   to leave it out of this version.
+#
+#   Credit to mottosso for Qt.py - https://github.com/mottosso/Qt.py
+#   Credit to dgovil for Python for Maya
+#   - https://github.com/dgovil/PythonForMayaSamples
 #
 
 # Imports / Dependencies
@@ -14,14 +30,21 @@ from Qt import QtWidgets, QtCore, QtGui
 
 # Classes
 
+#
 class CurveToJointUI(QtWidgets.QDialog):
     """
+    CurveToJointUI Class is used to encapculate the UI and its
+    functionality for creating a set of joints out of a curve selected by
+    the user.
 
+    It inherits from QrWidgets.QDialog, and as such requires Qt.py to functon.
     """
 
     def __init__(self):
         """
-
+        Overriden version of the standard intializing function for the class.
+        Calls the standard initalization through the super() and extends it
+        further to set a window title and call buildUI().
         """
         super(CurveToJointUI, self).__init__()
         self.setWindowTitle('Curve to Joint UI')
@@ -29,7 +52,7 @@ class CurveToJointUI(QtWidgets.QDialog):
 
     def buildUI(self):
         """
-
+        Builds the UI using elements from the Qt.py dependency.
         """
 
         # Creates Empty Layout
@@ -56,7 +79,14 @@ class CurveToJointUI(QtWidgets.QDialog):
 
     def createJoints(self):
         """
+        Creates the joints, and is triggered through the pushing of the UI's
+        button.
 
+        Retrieves the curve selected by the user, providing error handling to
+        prevent major issues.
+
+        Calculates the position of each joint based on the amount provided by
+        the user and creates each joint.
         """
 
         # Retrieves selected elements in environment.
@@ -104,7 +134,12 @@ class CurveToJointUI(QtWidgets.QDialog):
 
 def loadUI():
     """
+    Creates an instance of the CurveToJointUI Class, calls the show() function
+    which it inherited from QtWidgets.QDialog, and returns the instance of the
+    UI.
 
+    Please note, in order for the UI to remain active, the return value must be
+    assigned to a variable.
     """
 
     # Creates an instance of the CurveToJointUI class, calling the show menu
